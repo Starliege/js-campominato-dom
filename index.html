@@ -4,26 +4,24 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Campo Minato</title>
     <link rel="stylesheet" href="app.css">
 </head>
 <body>
-    <header>
-        <div id="title">
-          Campo Minato
-        </div>
-    
-        <div>
-          <button id="facile">Facile</button>
-          <button id="medio">Medio</button>
-          <button id="difficile">Difficile</button>
-        </div>
-      </header>
-    
-      <main>
-        <div id="select">Seleziona una difficoltà.</div>
-        <div id="griglia"></div>
-      </main>
+  <header>
+    <div class="options">
+      <select name="diff" id="scelta-diff">
+        <option value="1">Facile</option>
+        <option value="2">Medio </option>
+        <option value="3">Difficile</option>
+      </select>
+      <button id="genera" type="submit">Gioca</button>
+    </div>
+  </header>
+  <div style="display: block; text-align: center; margin-top: 20px;"><h2 class="risultato">Punteggio:</h2></div>
+  <main>
+    <div class="campo"></div>
+  </main>
       <script src="campominato.js"></script>
 </body>
 </html>

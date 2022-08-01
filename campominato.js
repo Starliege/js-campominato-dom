@@ -9,55 +9,110 @@
 // con difficoltà 3 => 49 caselle, con un numero compreso tra 1 e 49, divise in 7 caselle per 7 righe;
 
 // variabili
-const griglia = document.getElementById("griglia");
-let cella = document.getElementsByClassName("cella");
-const diffSet = document.getElementById("select");
+const griglia = document.querySelector('.campo')
+const sceltaDiff = document.getElementById('scelta-diff')
+const gioca = document.getElementById('genera')
+const punti = document.querySelector('.risultato')
+let arrayBombe = []
+let punteggio = 0
+let puntiMax
 
-
-// difficoltà
-document.getElementById("facile").addEventListener("click", diffFacile);
-document.getElementById("medio").addEventListener("click", diffMedio);
-document.getElementById("difficile").addEventListener("click", diffDifficile);
-
-// funzioni
-function diffFacile() {
-  diffSet.classList.add("hidden");
-  griglia.innerHTML = "";
-  griglia.classList.remove("animazione", "medio", "difficile");
-  griglia.classList.add("animazione", "facile");
-  for (i=1; i<101; i++) {
-    griglia.innerHTML += `<div class="cella">${i}</div>`;
+// griglia generata a seconda della diff
+gioca.addEventListener('click', function(){
+  gameReset() 
+  if(sceltaDiff.value === '1'){
+    // Difficile
+    genGriglia(10)
+    genBombe(100, arrayBombe)
+    puntiMax = 100 - 16
+    griglia.classList.add('difficile')
+  } else if(sceltaDiff.value === '2'){
+    // Medio
+    genGriglia(9)
+    genBombe(81, arrayBombe)
+    puntiMax = 81 - 16 
+    griglia.classList.add('medio')
+  } else if(sceltaDiff.value === '3'){
+    // Facile
+    genGriglia(7)
+    genBombe(49, arrayBombe)
+    puntiMax = 49 - 16
+    griglia.classList.add('facile')
   }
-  cellaAzzurra();
+  console.log(arrayBombe.sort((a, b) => a - b))
+})
+
+// griglia basata sulle var date dalla diff
+function genGriglia(dimensione){
+  let numeroCelle = dimensione ** 2
+  for(let i = 0; i < numeroCelle; i++){
+    const cella = getBoxElement() 
+    cella.innerHTML = i + 1
+    // inserisco la cella
+    griglia.append(cella)
+    
+  }
 }
 
-function diffMedio() {
-  diffSet.classList.add("hidden");
-  griglia.innerHTML = "";
-  griglia.classList.remove("animazione", "facile", "difficile");
-  griglia.classList.add("animazione", "medio");
-  for (i=1; i<82; i++) {
-    griglia.innerHTML += `<div class="cella">${i}</div>`;
-  }
-  cellaAzzurra();
+// caselle con l'event listener
+function getBoxElement() {
+  const box = document.createElement('div')
+  box.classList.add('box')
+  box.addEventListener('click', clicker)  
+  return box
 }
 
-function diffDifficile() {
-  diffSet.classList.add("hidden");
-  griglia.innerHTML = "";
-  griglia.classList.remove("animazione", "facile", "medio");
-  griglia.classList.add("animazione", "difficile");
-  for (i=1; i<50; i++) {
-    griglia.innerHTML += `<div class="cella">${i}</div>`;
+// funzione per i click
+function clicker(){
+  // game over o game win a seconda della casella che viene clicckata
+  const box = this
+  const numeroCella = parseInt(this.innerHTML) 
+  if (arrayBombe.includes(numeroCella)){
+    this.classList.add('bomb')
+    gameOver()
+  } else {
+    this.classList.add('safe')
+    punteggio++
+    if ( puntiMax - punteggio === 0 ){
+      gameWin()
+    }
+    punti.innerHTML = "Punteggio: " + punteggio 
   }
-  cellaAzzurra();
+  // impedisco di premere la stessa casella due volte
+  box.removeEventListener('click', clicker)
 }
 
-// click cella
-function cellaAzzurra() {
-  for (i=0; i<cella.length; i++) {
-    cella[i].addEventListener("click", function(){
-      this.classList.add("azzurro");
-    });
-  }
+function genBombe(numeroDiCaselle, arrayBombe){
+  // genero un array di bombe
+  while (arrayBombe.length < 16 ){
+    const randomNumber = Math.floor(Math.random() * numeroDiCaselle) + 1
+    if (arrayBombe.includes(randomNumber)){
+    }else{
+      arrayBombe.push(randomNumber)
+    }
+}
+  return arrayBombe  
+}
+
+function gameOver(){
+  alert("GAME OVER")
+  console.log("il tuo punteggio finale é " + punteggio)
+  griglia.classList.add('gameover')
+  punti.innerHTML = "Il tuo punteggio: " + punteggio 
+}
+
+function gameWin(){
+  alert("YOU ARE WINNER")
+  griglia.classList.add('gameover')
+  punti.innerHTML = "Il tuo punteggio: " + punteggio 
+}
+
+function gameReset(){
+    // resetto tutto
+    console.clear()
+    punteggio = 0
+    griglia.innerHTML = ""
+    griglia.classList.remove('small', 'medium', 'large', 'extrasmall', 'gameover')
+    arrayBombe = []
+    punti.innerHTML = 'Punteggio: '
 }
